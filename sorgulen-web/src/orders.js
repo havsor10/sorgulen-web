@@ -28,7 +28,19 @@ async function sendBestilling(data) {
 if (form) {
   form.addEventListener('submit', async (ev) => {
     ev.preventDefault();
-    msgEl.textContent = 'Sender bestilling…';
+    
+    // Vis loading state med animasjon
+    msgEl.className = 'loading';
+    msgEl.innerHTML = '🚀 Sender bestilling... <div style="display: inline-block; animation: spin 1s linear infinite;">⚙️</div>';
+    
+    // Legg til CSS for spin-animasjon
+    if (!document.querySelector('#spin-style')) {
+      const style = document.createElement('style');
+      style.id = 'spin-style';
+      style.textContent = '@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }';
+      document.head.appendChild(style);
+    }
+    
     // Les data fra skjema. FormData gir [key,value] for alle felter
     const fd = new FormData(form);
     const payload = {
@@ -43,11 +55,44 @@ if (form) {
     };
     try {
       const result = await sendBestilling(payload);
-      msgEl.textContent = `Bestilling mottatt! Referanse: ${result.id.slice(0, 8)}`;
+      
+      // Vis suksess med animasjon
+      msgEl.className = 'success';
+      msgEl.innerHTML = `
+        <div style="font-size: 1.2rem; margin-bottom: 0.5rem;">🎉 Bestilling mottatt!</div>
+        <div>Referanse: <strong>${result.id.slice(0, 8)}</strong></div>
+        <div style="font-size: 0.9rem; margin-top: 0.5rem; opacity: 0.8;">
+          Du vil motta en bekreftelse på e-post snart
+        </div>
+      `;
+      
+      // Scroll til melding
+      msgEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      
       form.reset();
+      
+      // Tilbakestill progress bar
+      const progressFill = document.getElementById('progressFill');
+      if (progressFill) {
+        progressFill.style.width = '0%';
+      }
+      
+      // Tilbakestill prisberegning
+      const estimatedPrice = document.getElementById('estimatedPrice');
+      if (estimatedPrice) {
+        estimatedPrice.textContent = 'Estimat beregnes automatisk...';
+      }
+      
     } catch (err) {
       console.error(err);
-      msgEl.textContent = 'Det oppstod en feil under innsending. Prøv igjen senere.';
+      msgEl.className = 'error';
+      msgEl.innerHTML = `
+        <div style="font-size: 1.1rem; margin-bottom: 0.5rem;">❌ Noe gikk galt</div>
+        <div>Det oppstod en feil under innsending. Prøv igjen senere.</div>
+        <div style="font-size: 0.9rem; margin-top: 0.5rem; opacity: 0.8;">
+          Hvis problemet vedvarer, kontakt oss direkte
+        </div>
+      `;
     }
   });
 }

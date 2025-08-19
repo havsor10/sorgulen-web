@@ -7,82 +7,313 @@
     <style>
       body {
         font-family: sans-serif;
-        margin: 1rem;
+        margin: 0;
+        padding: 2rem;
         line-height: 1.5;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: #333;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+      h1 {
+        text-align: center;
+        color: #667eea;
+        margin-bottom: 2rem;
+        font-size: 2.5rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .smart-pricing {
+        background: linear-gradient(45deg, #4CAF50, #45a049);
+        color: white;
+        padding: 1rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        text-align: center;
+        animation: slideInFromTop 0.8s ease-out;
+      }
+      .pricing-display {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-top: 0.5rem;
+      }
+      .form-section {
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border-left: 4px solid #667eea;
+        animation: slideInFromLeft 0.8s ease-out;
+      }
+      .form-section h3 {
+        margin-top: 0;
+        color: #667eea;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+      .form-row.single {
+        grid-template-columns: 1fr;
       }
       form {
-        max-width: 600px;
-        margin-bottom: 1rem;
+        margin-bottom: 2rem;
       }
       label {
         display: block;
         margin-top: 0.75rem;
         font-weight: 600;
+        color: #555;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
       }
       input, select, textarea {
         width: 100%;
-        padding: 0.5rem;
+        padding: 0.75rem;
         margin-top: 0.25rem;
-        border: 1px solid #ccc;
-        border-radius: 4px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
         box-sizing: border-box;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.9);
+      }
+      input:focus, select:focus, textarea:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        transform: translateY(-2px);
+      }
+      .input-group {
+        position: relative;
+      }
+      .input-icon {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #667eea;
+        pointer-events: none;
       }
       button {
         margin-top: 1rem;
-        padding: 0.6rem 1rem;
-        font-size: 1rem;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
         border: none;
-        border-radius: 4px;
-        background-color: #0077cc;
+        border-radius: 50px;
+        background: linear-gradient(45deg, #667eea, #764ba2);
         color: #fff;
         cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+      }
+      button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
       }
       button:disabled {
-        background-color: #999;
+        background: #999;
         cursor: not-allowed;
+        transform: none;
+      }
+      button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+      }
+      button:hover::before {
+        left: 100%;
+      }
+      .progress-bar {
+        width: 100%;
+        height: 4px;
+        background: #e0e0e0;
+        border-radius: 2px;
+        margin-bottom: 2rem;
+        overflow: hidden;
+      }
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        width: 0%;
+        transition: width 0.3s ease;
+        border-radius: 2px;
+      }
+      .weather-integration {
+        background: rgba(33, 150, 243, 0.1);
+        border: 1px solid rgba(33, 150, 243, 0.2);
+        border-radius: 10px;
+        padding: 1rem;
+        margin-top: 1rem;
+        text-align: center;
+      }
+      .back-link {
+        display: inline-block;
+        margin-top: 2rem;
+        padding: 0.5rem 1rem;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        text-decoration: none;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(5px);
+      }
+      .back-link:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
       }
       #melding {
-        margin-top: 1rem;
+        margin-top: 2rem;
         font-weight: bold;
+        padding: 1rem;
+        border-radius: 10px;
+        text-align: center;
+        transition: all 0.3s ease;
+      }
+      .success {
+        background: rgba(76, 175, 80, 0.1);
+        border: 1px solid rgba(76, 175, 80, 0.3);
+        color: #4CAF50;
+      }
+      .error {
+        background: rgba(244, 67, 54, 0.1);
+        border: 1px solid rgba(244, 67, 54, 0.3);
+        color: #f44336;
+      }
+      .loading {
+        background: rgba(255, 193, 7, 0.1);
+        border: 1px solid rgba(255, 193, 7, 0.3);
+        color: #FF9800;
+      }
+      @keyframes slideInFromTop {
+        from {
+          opacity: 0;
+          transform: translateY(-30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes slideInFromLeft {
+        from {
+          opacity: 0;
+          transform: translateX(-30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      @media (max-width: 768px) {
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+        .container {
+          margin: 1rem;
+          padding: 1rem;
+        }
+        h1 {
+          font-size: 2rem;
+        }
       }
     </style>
   </head>
   <body>
-    <h1>Bestill tjeneste</h1>
-    <form id="bestillSkjema">
-      <label for="navn">Navn</label>
-      <input type="text" id="navn" name="navn" required aria-required="true" />
+    <div class="container">
+      <h1>🚀 Bestill tjeneste</h1>
+      
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
 
-      <label for="telefon">Telefon</label>
-      <input type="tel" id="telefon" name="telefon" required aria-required="true" />
-
-      <label for="epost">E‑post</label>
-      <input type="email" id="epost" name="epost" required aria-required="true" />
-
-      <label for="adresse">Adresse</label>
-      <input type="text" id="adresse" name="adresse" required aria-required="true" />
-
-      <label for="tjeneste">Tjeneste</label>
-      <select id="tjeneste" name="tjeneste" required aria-required="true">
-        <option value="brøyting">Brøyting</option>
-        <option value="plenklipping">Plenklipping</option>
-        <option value="trefelling">Trefelling</option>
-        <option value="diverse">Diverse</option>
-      </select>
-
-      <label for="dato">Ønsket dato og tidspunkt</label>
-      <input type="datetime-local" id="dato" name="dato" />
-
-      <label for="tilleggsinfo">Tilleggsinformasjon</label>
-      <textarea id="tilleggsinfo" name="tilleggsinfo" rows="4"></textarea>
-
-      <label for="pris">Prisoverslag (valgfritt)</label>
-      <input type="number" step="0.01" id="pris" name="pris" />
-
-      <button type="submit">Send bestilling</button>
-    </form>
-    <div id="melding" role="status"></div>
-    <p><a href="/admin.html">Admin</a></p>
+      <div class="smart-pricing">
+      <form id="bestillSkjema">
+        <div class="form-section">
+          <h3>👤 Kontaktinformasjon</h3>
+          <div class="form-row">
+            <div class="input-group">
+              <label for="navn">👤 Navn</label>
+              <input type="text" id="navn" name="navn" required aria-required="true" />
+            </div>
+            <div class="input-group">
+              <label for="telefon">📱 Telefon</label>
+              <input type="tel" id="telefon" name="telefon" required aria-required="true" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="input-group">
+              <label for="epost">📧 E‑post</label>
+              <input type="email" id="epost" name="epost" required aria-required="true" />
+            </div>
+            <div class="input-group">
+              <label for="adresse">📍 Adresse</label>
+              <input type="text" id="adresse" name="adresse" required aria-required="true" />
+            </div>
+          </div>
+        </div>
+        <div>🤖 Smart prisberegning basert på værforhold og kompleksitet</div>
+        <div class="form-section">
+          <h3>🛠️ Tjenesteinformasjon</h3>
+          <div class="form-row">
+            <div class="input-group">
+              <label for="tjeneste">🔧 Tjeneste</label>
+              <select id="tjeneste" name="tjeneste" required aria-required="true">
+                <option value="">Velg tjeneste...</option>
+                <option value="brøyting">❄️ Brøyting</option>
+                <option value="plenklipping">🌱 Plenklipping</option>
+                <option value="trefelling">🌳 Trefelling</option>
+                <option value="diverse">🔨 Diverse</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label for="dato">📅 Ønsket dato og tidspunkt</label>
+              <input type="datetime-local" id="dato" name="dato" />
+            </div>
+          </div>
+          <div class="form-row single">
+            <div class="input-group">
+              <label for="tilleggsinfo">📝 Tilleggsinformasjon</label>
+              <textarea id="tilleggsinfo" name="tilleggsinfo" rows="4" placeholder="Beskriv jobben i detalj..."></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="pricing-display" id="estimatedPrice">Estimat beregnes automatisk...</div>
+        <div class="weather-integration" id="weatherIntegration">
+          <div>🌤️ Værbasert anbefaling vil vises her når du velger tjeneste og dato</div>
+        </div>
+      </div>
+        <button type="submit">🚀 Send bestilling</button>
+      </form>
+      
+      <div id="melding" role="status"></div>
+    </div>
+    
+    <a href="/index.html" class="back-link">← Tilbake til hovedsiden</a>
     <script type="module" src="/src/orders.js"></script>
+    <script type="module" src="/src/smart-booking.js"></script>
   </body>
 </html>

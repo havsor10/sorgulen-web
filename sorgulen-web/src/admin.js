@@ -21,8 +21,21 @@ async function getAccessToken() {
   return data?.session?.access_token;
 }
 
+// Eksporter getAccessToken for bruk i andre moduler
+window.getAccessToken = getAccessToken;
+
 async function loadOrders() {
-  adminMsg.textContent = 'Laster bestillinger…';
+  adminMsg.className = 'loading';
+  adminMsg.innerHTML = '🔄 Laster bestillinger... <div style="display: inline-block; animation: spin 1s linear infinite;">⚙️</div>';
+  
+  // Legg til CSS for spin-animasjon
+  if (!document.querySelector('#spin-style')) {
+    const style = document.createElement('style');
+    style.id = 'spin-style';
+    style.textContent = '@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }';
+    document.head.appendChild(style);
+  }
+  
   try {
     const token = await getAccessToken();
     if (!token) throw new Error('Ingen tilgang');
@@ -31,65 +44,19 @@ async function loadOrders() {
     });
     if (!res.ok) throw new Error('API-feil');
     const orders = await res.json();
-    renderOrders(orders, token);
-    adminMsg.textContent = orders.length ? '' : 'Ingen bestillinger funnet.';
+    
+    // Send event til dashboard
+    document.dispatchEvent(new CustomEvent('ordersLoaded', {
+      detail: { orders }
+    }));
+    
+    adminMsg.className = orders.length ? '' : 'success';
+    adminMsg.textContent = orders.length ? '' : '📭 Ingen bestillinger funnet.';
   } catch (err) {
     console.error(err);
-    adminMsg.textContent = 'Kunne ikke hente bestillinger.';
+    adminMsg.className = 'error';
+    adminMsg.textContent = '❌ Kunne ikke hente bestillinger.';
   }
-}
-
-function renderOrders(list, token) {
-  ordersTableBody.innerHTML = '';
-  list.forEach((order) => {
-    const tr = document.createElement('tr');
-    // Referanse viser de første 8 tegn av UUID
-    const ref = order.id.slice(0, 8);
-    tr.innerHTML = `
-      <td>${ref}</td>
-      <td>${order.customer_name}</td>
-      <td>${order.service_type}</td>
-      <td>${new Date(order.created_at).toLocaleString('nb-NO')}</td>
-      <td></td>
-    `;
-    // Status celle med select
-    const statusCell = tr.querySelector('td:last-child');
-    const sel = document.createElement('select');
-    sel.className = 'status';
-    ['new','in_progress','done','cancelled'].forEach((st) => {
-      const opt = document.createElement('option');
-      opt.value = st;
-      opt.textContent = {
-        'new': 'Ny',
-        'in_progress': 'Pågår',
-        'done': 'Ferdig',
-        'cancelled': 'Avbrutt'
-      }[st];
-      if (st === order.status) opt.selected = true;
-      sel.appendChild(opt);
-    });
-    sel.addEventListener('change', async () => {
-      const newStatus = sel.value;
-      try {
-        const res = await fetch(`${API_BASE}/v1/orders/${order.id}`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
-          },
-          body: JSON.stringify({ status: newStatus })
-        });
-        if (!res.ok) throw new Error('Oppdatering feilet');
-      } catch (err) {
-        console.error(err);
-        alert('Kunne ikke oppdatere status.');
-        // Tilbakestill select til opprinnelig verdi
-        sel.value = order.status;
-      }
-    });
-    statusCell.appendChild(sel);
-    ordersTableBody.appendChild(tr);
-  });
 }
 
 // Håndter innlogging
@@ -110,10 +77,16 @@ loginForm?.addEventListener('submit', async (ev) => {
     // Skjul login, vis admin
     loginView.style.display = 'none';
     adminView.style.display = '';
+    
+    // Vis velkomstmelding
+    loginMsg.className = 'success';
+    loginMsg.textContent = '✅ Innlogget som administrator';
+    
     await loadOrders();
   } catch (err) {
     console.error(err);
-    loginMsg.textContent = err.message || 'Innlogging feilet';
+    loginMsg.className = 'error';
+    loginMsg.textContent = `❌ ${err.message || 'Innlogging feilet'}`;
   }
 });
 
@@ -122,7 +95,8 @@ logoutBtn?.addEventListener('click', async () => {
   await supa.auth.signOut();
   adminView.style.display = 'none';
   loginView.style.display = '';
-  loginMsg.textContent = 'Logget ut.';
+  loginMsg.className = 'success';
+  loginMsg.textContent = '👋 Logget ut.';
 });
 
 // Dersom brukeren allerede har en aktiv sesjon når siden lastes, vis admin-siden

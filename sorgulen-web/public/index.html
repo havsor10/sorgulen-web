@@ -7,29 +7,199 @@
     <style>
       body {
         font-family: sans-serif;
-        margin: 2rem;
+        margin: 0;
+        padding: 0;
         text-align: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: white;
+      }
+      .container {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 3rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        max-width: 600px;
+        width: 90%;
       }
       h1 {
-        margin-bottom: 1.5rem;
+        margin-bottom: 2rem;
+        font-size: 2.5rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        animation: fadeInUp 1s ease-out;
+      }
+      .subtitle {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+        animation: fadeInUp 1s ease-out 0.3s both;
+      }
+      .weather-widget {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 15px;
+        padding: 1rem;
+        margin-bottom: 2rem;
+        animation: fadeInUp 1s ease-out 0.6s both;
+      }
+      .weather-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+      .weather-temp {
+        font-size: 2rem;
+        font-weight: bold;
+      }
+      .weather-desc {
+        font-size: 1.1rem;
+        opacity: 0.9;
+      }
+      .work-recommendation {
+        background: rgba(76, 175, 80, 0.2);
+        border: 1px solid rgba(76, 175, 80, 0.3);
+        border-radius: 10px;
+        padding: 0.5rem 1rem;
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+      }
+      .buttons-container {
+        animation: fadeInUp 1s ease-out 0.9s both;
       }
       a.button {
         display: inline-block;
-        margin: 0.5rem;
-        padding: 0.75rem 1.5rem;
-        background-color: #0077cc;
+        margin: 1rem 0.5rem;
+        padding: 1rem 2rem;
+        background: linear-gradient(45deg, #0077cc, #00a8ff);
         color: #fff;
         text-decoration: none;
-        border-radius: 4px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 119, 204, 0.3);
+        position: relative;
+        overflow: hidden;
+      }
+      a.button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 119, 204, 0.4);
+      }
+      a.button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+      }
+      a.button:hover::before {
+        left: 100%;
+      }
+      .smart-features {
+        margin-top: 2rem;
+        text-align: left;
+        animation: fadeInUp 1s ease-out 1.2s both;
+      }
+      .feature-item {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 1rem;
+        margin: 0.5rem 0;
+        border-left: 4px solid #00a8ff;
+        transition: all 0.3s ease;
+      }
+      .feature-item:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateX(5px);
+      }
+      .feature-icon {
+        display: inline-block;
+        margin-right: 0.5rem;
+        font-size: 1.2rem;
+      }
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .pulse {
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+      }
+      @media (max-width: 768px) {
+        .container {
+          padding: 2rem 1rem;
+        }
+        h1 {
+          font-size: 2rem;
+        }
+        .weather-info {
+          flex-direction: column;
+          text-align: center;
+        }
       }
     </style>
   </head>
   <body>
-    <h1>Sørgulen Industriservice</h1>
-    <p>Velkommen! Velg hva du vil gjøre:</p>
-    <p>
-      <a class="button" href="/bestill.html">Bestill tjeneste</a>
-      <a class="button" href="/admin.html">Admin</a>
-    </p>
+    <div class="container">
+      <h1>🏭 Sørgulen Industriservice</h1>
+      <p class="subtitle">Din pålitelige partner for alle utendørs tjenester</p>
+      
+      <div class="weather-widget" id="weatherWidget">
+        <div class="weather-info">
+          <div>
+            <div class="weather-temp" id="temperature">Laster...</div>
+            <div class="weather-desc" id="description">Henter værdata</div>
+          </div>
+          <div>
+            <div>📍 Sørgulen</div>
+            <div id="workRecommendation" class="work-recommendation" style="display: none;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="buttons-container">
+        <a class="button pulse" href="/bestill.html">🚀 Bestill tjeneste</a>
+        <a class="button" href="/admin.html">⚙️ Admin</a>
+      <div class="smart-features">
+        <div class="feature-item">
+          <span class="feature-icon">🤖</span>
+          <strong>AI-drevet væranalyse:</strong> Vi anbefaler beste tidspunkt for arbeid basert på værforhold
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">📱</span>
+          <strong>Sanntids oppdateringer:</strong> Følg fremdriften på jobben din live
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">🎯</span>
+          <strong>Smart prisberegning:</strong> Automatisk estimat basert på værforhold og kompleksitet
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">🌱</span>
+          <strong>Miljøvennlig:</strong> Optimaliserte ruter og miljøvennlige metoder
+        </div>
+      </div>
+    </div>
+      </div>
+    <script type="module" src="/src/weather.js"></script>
   </body>
 </html>
